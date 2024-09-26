@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ka"> <!-- Changed language to Georgian -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NODE BALANCE</title> <!-- Georgian translation -->
+    <style>
+        @font-face {
+            font-family: 'Proxima Nova Alt Bold';
+            src: url('https://cdn.example.com/proxima-nova-alt-bold.woff2') format('woff2');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body {
+            background-color: #000000; /* Black background */
+            color: #00FF00; /* Standard green font color */
+            font-family: 'Proxima Nova Alt Bold', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #00FF00; /* Standard green */
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #00FF00; /* Standard green */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        table, th, td {
+            border: 1px solid #00FF00; /* Green border for table */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            color: #00FF00; /* Standard green */
+        }
+
+        th {
+            background-color: #303030; /* Darker background for headers */
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #00FF00; /* Standard green */
+        }
+
+        .wallets {
+            margin-top: 20px;
+        }
+
+        .wallets .wallet-address {
+            font-weight: bold;
+            color: #00FF00; /* Standard green */
+        }
+
+        .wallets p {
+            margin: 10px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #303030; /* Darker slider background */
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 12px;
+            width: 12px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #00FF00; /* Green slider knob */
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #00FF00; /* Green background when checked */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        a {
+            color: #00FF00; /* Green links */
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #9b59b6; /* Hover color */
+        }
+
+    </style>
+    <script>
+        // Set a timer to refresh the page every 75 seconds, unless auto-refresh is turned off
+        let autoRefresh = true;
+
+        function toggleRefresh() {
+            autoRefresh = !autoRefresh;
+        }
+
+        function refreshPage() {
+            if (autoRefresh) {
+                window.location.reload();
+            }
+        }
+
+        setInterval(refreshPage, 75000);  // 75 seconds in milliseconds
+
+        function loadCustomNodeNames() {
+            const nodes = document.querySelectorAll('.node-input');
+            nodes.forEach(node => {
+                const storedName = localStorage.getItem(node.id);
+                if (storedName) {
+                    node.value = storedName;
+                }
+                node.addEventListener('input', (e) => {
+                    localStorage.setItem(e.target.id, e.target.value);
+                });
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCustomNodeNames);
+    </script>
+</head>
+<body>
+    <!-- Display the total balance of all peers -->
+    <h1>სულ Quil {{ total_balance }} Quil</h1> <!-- Georgian translation -->
+
+    <!-- Display the current wQUIL price -->
+    <h1>მიმდინარე wQUIL ფასი</h1> <!-- Georgian translation -->
+    <p>ფასი USD-ში: ${{ wquil_price }}</p>
+
+    <!-- Night Mode and Auto-Refresh Switches -->
+    <div style="text-align: right; margin-bottom: 20px;">
+        <label for="nightMode">ღამის რეჟიმი</label> <!-- Georgian translation -->
+        <label class="switch">
+            <input type="checkbox" id="nightMode">
+            <span class="slider round"></span> <!-- Rounded slider -->
+        </label>
+
+        <label for="autoRefresh" style="margin-left: 20px;">ავტომატური განახლება</label> <!-- Georgian translation -->
+        <label class="switch">
+            <input type="checkbox" id="autoRefresh" checked onclick="toggleRefresh()">
+            <span class="slider round"></span> <!-- Rounded slider -->
+        </label>
+    </div>
+
+    <!-- Display Node Statistics table -->
+    <h1>Node-ს სტატისტიკა</h1> <!-- Georgian translation -->
+    <table>
+        <thead>
+            <tr>
+                <th>Node</th> <!-- Georgian translation -->
+                <th>Peer ID</th>
+                <th>Quil ბალანსი</th> <!-- Georgian translation -->
+                <th>Quil წუთში</th> <!-- Georgian translation -->
+                <th>Quil საათში</th> <!-- Georgian translation -->
+                <th>$ საათში</th> <!-- Georgian translation -->
+                <th>Quil დღეში</th> <!-- Georgian translation -->
+                <th>$ დღეში</th> <!-- Georgian translation -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in table_data %}
+            <tr>
+                <td><input type="text" class="node-input" id="node-{{ loop.index }}" placeholder="ნოდის სახელი"></td> <!-- Georgian translation -->
+                <td>{{ row['Peer ID'] }}</td>
+                <td>{{ "{:.4f}".format(row['Balance'] | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(row['Quil Per Minute'] | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(row['Quil Per Hour'] | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(row['$ Per Hour'] | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(row['Quil Per Day'] | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(row['$ Per Day'] | default(0.0)) }}</td>
+            </tr>
+            {% endfor %}
+            <!-- Totals row -->
+            <tr>
+                <td>სულ</td> <!-- Georgian translation -->
+                <td></td>
+                <td>{{ "{:.4f}".format(total_quil_balance | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(total_quil_per_minute | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(total_quil_per_hour | default(0.0)) }}</td>
+                <td>${{ "{:.4f}".format(total_dollar_per_hour | default(0.0)) }}</td>
+                <td>{{ "{:.4f}".format(total_quil_per_day | default(0.0)) }}</td>
+                <td>${{ "{:.4f}".format(total_dollar_per_day | default(0.0)) }}</td>
+             </tr>
+        </tbody>
+    </table>
+
+    <!-- Display the interactive Plotly charts -->
+    <h1>Node ბალანსები დროში</h1> <!-- Georgian translation -->
+    <div>{{ balance_graph_html | safe }}</div>
+
+    <h1>Quil ყოველ წუთში</h1> <!-- Georgian translation -->
+    <div>{{ quil_minute_graph_html | safe }}</div>
+
+    <h1>საათობრივი ზრდა Quil-ში</h1> <!-- Georgian translation -->
+    <div>{{ hourly_growth_graph_html | safe }}</div>
+
+    <h1>შემოსავალი USD-ში საათში</h1> <!-- Georgian translation -->
+    <div>{{ earnings_per_hour_graph_html | safe }}</div>
+
+    <h1>შემოსავალი USD-ში წუთში</h1> <!-- Georgian translation -->
+    <div>{{ earnings_per_minute_graph_html | safe }}</div>
+</body>
+</html>
