@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 LOG_FILE="/root/track_balances.log"
 
@@ -17,4 +17,4 @@ echo "[$DATE] Peer ID: $PEER_ID, Balance: $BALANCE" >> $LOG_FILE
 # Send the data to the Flask server
 curl -X POST -H "Content-Type: application/json" \
 -d "{\"peer_id\":\"$PEER_ID\", \"balance\":\"$BALANCE\", \"timestamp\":\"$DATE\"}" \
-http://192.168.20.216:5000/update_balance >> $LOG_FILE 2>&1
+http://192.168.20.210:5000/update_balance >> $LOG_FILE 2>&1
